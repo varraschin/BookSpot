@@ -1,0 +1,37 @@
+@model RegistroVM
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<div class="card formContainer p-5">
+    <h2 class="mb-4">Criar Conta</h2>
+    <form asp-action="Registro" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger" hidden></div>
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label"></label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger mt-2"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger mt-2"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Senha" class="form-label"></label>
+            <input asp-for="Senha" type="password" class="form-control" />
+            <span asp-validation-for="Senha" class="text-danger mt-2"></span>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-1">Criar</button>
+        
+        <p class="text-center mt-3">Já possui uma conta? <a asp-action="Login" asp-controller="Auth">Entre aqui!</a></p>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth.css">
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial.cshtml" />
+}
