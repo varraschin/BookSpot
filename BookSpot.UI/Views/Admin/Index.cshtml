@@ -1,5 +1,146 @@
 @{
     ViewData["Title"] = "Área Administrativa";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Menu"] = "Admin";
 }
 
-<h1>AREA ADMINISTRATIVA</h1>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Compartilhar</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Exportar</button>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <i class="bi bi-calendar3"></i>
+            Esta semana
+        </button>
+    </div>
+</div>
+
+<!-- Cards de Resumo -->
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Clientes</h5>
+                        <h2 class="mb-0">1,248</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                </div>
+                <p class="card-text mt-2"><small>+12% desde o último mês</small></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Produtos</h5>
+                        <h2 class="mb-0">5,421</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-box-seam fs-1"></i>
+                    </div>
+                </div>
+                <p class="card-text mt-2"><small>+8% desde o último mês</small></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Pedidos</h5>
+                        <h2 class="mb-0">342</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-cart-check fs-1"></i>
+                    </div>
+                </div>
+                <p class="card-text mt-2"><small>+5% desde o último mês</small></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Receita</h5>
+                        <h2 class="mb-0">R$ 42,8K</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-currency-dollar fs-1"></i>
+                    </div>
+                </div>
+                <p class="card-text mt-2"><small>+15% desde o último mês</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Atividades Recentes -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Atividades Recentes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Ação</th>
+                                <th>Data/Hora</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>João Silva</td>
+                                <td>Adicionou novo produto</td>
+                                <td>15/03/2023 14:32</td>
+                                <td><span class="badge bg-success">Concluído</span></td>
+                            </tr>
+                            <tr>
+                                <td>Maria Santos</td>
+                                <td>Atualizou informações do cliente</td>
+                                <td>15/03/2023 13:15</td>
+                                <td><span class="badge bg-success">Concluído</span></td>
+                            </tr>
+                            <tr>
+                                <td>Pedro Oliveira</td>
+                                <td>Excluiu categoria</td>
+                                <td>15/03/2023 11:45</td>
+                                <td><span class="badge bg-danger">Falhou</span></td>
+                            </tr>
+                            <tr>
+                                <td>Ana Costa</td>
+                                <td>Criou novo usuário</td>
+                                <td>14/03/2023 16:20</td>
+                                <td><span class="badge bg-success">Concluído</span></td>
+                            </tr>
+                            <tr>
+                                <td>Carlos Lima</td>
+                                <td>Atualizou permissões</td>
+                                <td>14/03/2023 10:05</td>
+                                <td><span class="badge bg-success">Concluído</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

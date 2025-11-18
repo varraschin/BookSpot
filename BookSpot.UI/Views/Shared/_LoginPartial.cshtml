@@ -1,5 +1,4 @@
 @using BookSpot.UI.Services
-@using BookSpot.UI.Services.Interfaces
 @inject IAuthService AuthService
 @{
     string foto = AuthService.GetUserFoto();
@@ -8,13 +7,25 @@
 
 @if (AuthService.IsAuthenticated())
 {
-    <div class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="@foto" width="40" /> 
+    <div class="nav-item dropdown userDropdown">
+        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="@foto" width="40" class="me-2" />
+            <div class="d-none d-md-block text-white">
+                <div class="mb-0">@AuthService.GetUserName()</div>
+                <small class="mt-0">@AuthService.GetUserPerfil()</small>
+            </div>
         </a>
-        <ul class="dropdown-menu" style="left: -100px">
+        <ul class="dropdown-menu" style="left: unset !important; right: 0 !important;">
             <li><a class="dropdown-item" href="#">Meu Perfil</a></li>
-            <li><hr class="dropdown-divider"></li>
+            @if (AuthService.GetUserPerfil() == "Administrador")
+            {
+                <li><a class="dropdown-item" asp-action="Index" asp-controller="Admin">Acessar Área Administrativa </a> </li>
+                <li><a class="dropdown-item" asp-action="Index" asp-controller="Home">Acessar Área Publica</a></li>
+            }
+            <li>
+                <hr class="dropdown-divider">
+            </li>
             <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Sair</a></li>
         </ul>
     </div>

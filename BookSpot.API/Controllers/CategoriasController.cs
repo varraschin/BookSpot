@@ -1,108 +1,177 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookSpot.API.Data;
+using BookSpot.API.DTOs;
 using BookSpot.API.Models;
+using BookSpot.API.Services.Interfaces;
 
-namespace BookSpot.API.Controllers
+namespace BookSpot.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class CategoriasController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CategoriasController : ControllerBase
+    private readonly AppDbContext _context;
+    private readonly IFileService _fileService;
+
+    public CategoriasController(AppDbContext context, IFileService fileService)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+        _fileService = fileService;
+    }
 
-        public CategoriasController(AppDbContext context)
+    // GET: api/Categorias
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
+    {
+        var categorias = await _context.Categorias.ToListAsync();
+        
+        // Converter caminhos relativos em URLs completas
+        foreach (var categoria in categorias)
         {
-            _context = context;
+            if (!string.IsNullOrEmpty(categoria.Foto))
+            {
+                categoria.Foto = _fileService.GetFileUrl(categoria.Foto);
+            }
+        }
+        
+        return categorias;
+    }
+
+    // GET: api/Categorias/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Categoria>> GetCategoria(int id)
+    {
+        var categoria = await _context.Categorias.FindAsync(id);
+
+        if (categoria == null)
+        {
+            return NotFound();
         }
 
-        // GET: api/Categorias
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
+        // Converter caminho relativo em URL completa
+        if (!string.IsNullOrEmpty(categoria.Foto))
         {
-            return await _context.Categorias.ToListAsync();
+            categoria.Foto = _fileService.GetFileUrl(categoria.Foto);
         }
 
-        // GET: api/Categorias/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Categoria>> GetCategoria(int id)
-        {
-            var categoria = await _context.Categorias.FindAsync(id);
+        return categoria;
+    }
 
-            if (categoria == null)
+    // PUT: api/Categorias/5
+    [HttpPut("{id}")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> PutCategoria(int id, [FromForm] CategoriaUpdateDto categoriaDto)
+    {
+        if (id != categoriaDto.Id)
+        {
+            return BadRequest();
+        }
+
+        var categoria = await _context.Categorias.FindAsync(id);
+        if (categoria == null)
+        {
+            return NotFound();
+        }
+
+        // Atualizar propriedades básicas
+        categoria.Nome = categoriaDto.Nome;
+        categoria.Cor = categoriaDto.Cor;
+
+        // Processar nova foto se fornecida
+        if (categoriaDto.Foto != null && categoriaDto.Foto.Length > 0)
+        {
+            // Deletar foto antiga se existir
+            if (!string.IsNullOrEmpty(categoria.Foto))
+            {
+                await _fileService.DeleteFileAsync(categoria.Foto);
+            }
+
+            // Salvar nova foto
+            categoria.Foto = await _fileService.SaveFileAsync(categoriaDto.Foto, "img\\categorias");
+        }
+
+        _context.Entry(categoria).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!CategoriaExists(id))
             {
                 return NotFound();
             }
-
-            return categoria;
-        }
-
-        // PUT: api/Categorias/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategoria(int id, Categoria categoria)
-        {
-            if (id != categoria.Id)
+            else
             {
-                return BadRequest();
+                throw;
             }
-
-            _context.Entry(categoria).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoriaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
-        // POST: api/Categorias
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
+        // Retornar categoria com URL completa
+        if (!string.IsNullOrEmpty(categoria.Foto))
         {
-            _context.Categorias.Add(categoria);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCategoria", new { id = categoria.Id }, categoria);
+            categoria.Foto = _fileService.GetFileUrl(categoria.Foto);
         }
 
-        // DELETE: api/Categorias/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoria(int id)
+        return Ok(categoria);
+    }
+
+    // POST: api/Categorias
+    [HttpPost]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<Categoria>> PostCategoria([FromForm] CategoriaCreateDto categoriaDto)
+    {
+        var categoria = new Categoria
         {
-            var categoria = await _context.Categorias.FindAsync(id);
-            if (categoria == null)
-            {
-                return NotFound();
-            }
+            Nome = categoriaDto.Nome,
+            Cor = categoriaDto.Cor ?? "rgba(0,0,0,1)"
+        };
 
-            _context.Categorias.Remove(categoria);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CategoriaExists(int id)
+        // Salvar foto se fornecida
+        if (categoriaDto.Foto != null && categoriaDto.Foto.Length > 0)
         {
-            return _context.Categorias.Any(e => e.Id == id);
+            categoria.Foto = await _fileService.SaveFileAsync(categoriaDto.Foto, "img\\categorias");
         }
+
+        _context.Categorias.Add(categoria);
+        await _context.SaveChangesAsync();
+
+        // Retornar categoria com URL completa
+        if (!string.IsNullOrEmpty(categoria.Foto))
+        {
+            categoria.Foto = _fileService.GetFileUrl(categoria.Foto);
+        }
+
+        return CreatedAtAction("GetCategoria", new { id = categoria.Id }, categoria);
+    }
+
+    // DELETE: api/Categorias/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCategoria(int id)
+    {
+        var categoria = await _context.Categorias.FindAsync(id);
+        if (categoria == null)
+        {
+            return NotFound();
+        }
+
+        // Deletar foto associada se existir
+        if (!string.IsNullOrEmpty(categoria.Foto))
+        {
+            await _fileService.DeleteFileAsync(categoria.Foto);
+        }
+
+        _context.Categorias.Remove(categoria);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private bool CategoriaExists(int id)
+    {
+        return _context.Categorias.Any(e => e.Id == id);
     }
 }
+

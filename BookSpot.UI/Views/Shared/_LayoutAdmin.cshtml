@@ -1,0 +1,97 @@
+@{
+    string activeMenu(string Link) {
+        return ViewBag.Menu == Link ? "active" : "";
+    }
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookSpot - @ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/admin.css">
+    @await RenderSectionAsync("Styles", false)
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <!-- Botão para expandir/diminuir sidebar -->
+            <button class="btn btn-outline-light me-2" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            
+            <!-- Logo -->
+            <a class="navbar-brand" href="#">
+                BookSpot
+            </a>
+            
+            <!-- Botões do lado direito -->
+            <div class="d-flex align-items-end ms-auto">
+                <!-- Botão de alternar tema -->
+                <button class="btn btn-outline-light me-3" id="themeToggle">
+                    <i class="bi bi-moon"></i>
+                </button>
+                <partial name="_LoginPartial.cshtml">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="d-flex flex-column flex-shrink-0 p-3 h-100">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a asp-action="Index" asp-controller="Admin" class='nav-link @activeMenu("Admin")' aria-current="page">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-people me-2"></i>
+                        <span>Clientes</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-action="Index" asp-controller="Produtos" class='nav-link @activeMenu("Produtos")'>
+                        <i class="bi bi-box-seam me-2"></i>
+                        <span>Produtos</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-action="Index" asp-controller="Categorias" class='nav-link @activeMenu("Categorias")'>
+                        <i class="bi bi-tags me-2"></i>
+                        <span>Categorias</span>
+                    </a>
+                </li>
+                <li><hr class="my-2"></li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-person-circle me-2"></i>
+                        <span>Usuários</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/admin.js"></script>
+    @await RenderSectionAsync("Scripts", false)
+</body>
+</html>
+
