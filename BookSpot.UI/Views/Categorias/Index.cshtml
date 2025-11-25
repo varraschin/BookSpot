@@ -1,0 +1,125 @@
+@model List<CategoriaVM>
+@{
+    ViewData["Title"] = "Categorias";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Menu"] = "Categorias";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>@ViewData["Title"]</h1>
+    @if (User.IsInRole("Administrador"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nova Categoria
+        </a>
+    }
+</div>
+
+@if (TempData["Sucesso"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["Sucesso"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Erro"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Lista de Categorias</h5>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Foto</th>
+                            <th>Nome</th>
+                            <th>Cor</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var categoria in Model)
+                        {
+                            <tr>
+                                <td>@categoria.Id</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(categoria.FotoUrl))
+                                    {
+                                        <img src="@categoria.FotoUrl" alt="@categoria.Nome" 
+                                             class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                             style="width: 60px; height: 60px;">
+                                            <i class="fas fa-image text-muted"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>@categoria.Nome</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="color-preview me-2" 
+                                             style="width: 20px; height: 20px; background-color: @categoria.Cor; border: 1px solid #ccc; border-radius: 3px;"></div>
+                                        <small>@categoria.Cor</small>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@categoria.Id" 
+                                           class="btn btn-info btn-sm" title="Detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (User.IsInRole("Administrador"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@categoria.Id" 
+                                               class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@categoria.Id" 
+                                               class="btn btn-danger btn-sm" title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-4">
+                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                <h4>Nenhuma categoria encontrada</h4>
+                <p class="text-muted">Não há categorias cadastradas no sistema.</p>
+                @if (User.IsInRole("Administrador"))
+                {
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Cadastrar Primeira Categoria
+                    </a>
+                }
+            </div>
+        }
+    </div>
+    @if (Model.Any())
+    {
+        <div class="card-footer">
+            <small class="text-muted">Total de @Model.Count categorias cadastradas</small>
+        </div>
+    }
+</div>

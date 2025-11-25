@@ -1,0 +1,135 @@
+@model List<BookSpot.UI.DTOs.ProdutoDto>
+@{
+    ViewData["Title"] = "Nossos Produtos";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Filtros -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-filter me-2"></i>Filtros
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Categorias</h6>
+                    <div class="list-group list-group-flush">
+                        <a asp-action="Produtos" 
+                           class="list-group-item list-group-item-action @(ViewBag.CategoriaSelecionada == 0 ? "active" : "")">
+                            Todas as Categorias
+                        </a>
+                        @foreach (var categoria in ViewBag.Categorias)
+                        {
+                            <a asp-action="Produtos" asp-route-categoriaId="@categoria.Id"
+                               class="list-group-item list-group-item-action @(ViewBag.CategoriaSelecionada == categoria.Id ? "active" : "")">
+                                @categoria.Nome
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Produtos -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 fw-bold">Nossos Produtos</h1>
+                <small class="text-muted">@Model.Count produtos encontrados</small>
+            </div>
+
+            @if (TempData["Erro"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["Erro"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (Model.Any())
+            {
+                <div class="row g-4">
+                    @foreach (var produto in Model)
+                    {
+                        <div class="col-md-6 col-xl-4">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="position-relative">
+                                    @if (!string.IsNullOrEmpty(produto.Foto))
+                                    {
+                                        <img src="@produto.Foto" alt="@produto.Nome" 
+                                             class="card-img-top" style="height: 200px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light d-flex align-items-center justify-content-center" 
+                                             style="height: 200px;">
+                                            <i class="fas fa-image fa-3x text-muted"></i>
+                                        </div>
+                                    }
+                                    
+                                    @if (produto.Destaque)
+                                    {
+                                        <div class="position-absolute top-0 start-0 m-2">
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-star me-1"></i>Destaque
+                                            </span>
+                                        </div>
+                                    }
+
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <span class="badge @(produto.Qtde > 0 ? "bg-success" : "bg-danger")">
+                                            @produto.Qtde
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title fw-bold">@produto.Nome</h6>
+                                    <small class="text-muted mb-2">@produto.CategoriaNome</small>
+                                    
+                                    @if (!string.IsNullOrEmpty(produto.Descricao))
+                                    {
+                                        <p class="card-text small text-muted flex-grow-1">
+                                            @produto.Descricao
+                                        </p>
+                                    }
+                                    
+                                    <div class="mt-auto pt-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="h5 text-success fw-bold mb-0">
+                                                R$ @produto.ValorVenda.ToString("N2")
+                                            </span>
+                                            @if (produto.ValorCusto > 0 && produto.ValorVenda > produto.ValorCusto)
+                                            {
+                                                <small class="text-muted text-decoration-line-through">
+                                                    R$ @produto.ValorCusto.ToString("N2")
+                                                </small>
+                                            }
+                                        </div>
+                                        <a asp-action="Detalhes" asp-route-id="@produto.Id" 
+                                           class="btn btn-primary btn-sm w-100">
+                                            <i class="fas fa-eye me-1"></i>Ver Detalhes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Nenhum produto encontrado</h4>
+                    <p class="text-muted">Tente alterar os filtros ou volte mais tarde.</p>
+                    <a asp-action="Produtos" class="btn btn-primary">
+                        <i class="fas fa-redo me-1"></i>Ver Todos os Produtos
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

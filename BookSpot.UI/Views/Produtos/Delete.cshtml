@@ -1,0 +1,163 @@
+@model ProdutoVM
+@{
+    ViewData["Title"] = "Excluir Produto";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Menu"] = "Produtos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>@ViewData["Title"]</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Voltar para Lista
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-exclamation-triangle"></i> Confirmação de Exclusão
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-exclamation-circle"></i> Atenção!
+                    </h5>
+                    <p class="mb-0">
+                        Você está prestes a excluir o produto <strong>"@Model.Nome"</strong>. 
+                        Esta ação <strong>não pode ser desfeita</strong>.
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <!-- Foto do produto -->
+                        @if (!string.IsNullOrEmpty(Model.FotoUrl))
+                        {
+                            <div class="text-center mb-3">
+                                <img src="@Model.FotoUrl" class="img-fluid rounded" style="max-height: 200px;" alt="@Model.Nome" />
+                                <small class="text-muted">Foto do produto</small>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center mb-3">
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
+                                <small class="text-muted">Nenhuma foto</small>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-8">
+                        <!-- Detalhes do produto -->
+                        <div class="mb-3">
+                            <h6>Detalhes do Produto:</h6>
+                            <table class="table table-sm table-borderless">
+                                <tr>
+                                    <td class="fw-bold" style="width: 120px;">ID:</td>
+                                    <td>@Model.Id</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Nome:</td>
+                                    <td>@Model.Nome</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Categoria:</td>
+                                    <td>@Model.CategoriaNome</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Estoque:</td>
+                                    <td>@Model.Qtde unidades</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Valor Venda:</td>
+                                    <td class="text-success">R$ @Model.ValorVenda.ToString("N2")</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Status:</td>
+                                    <td>
+                                        @if (Model.Destaque)
+                                        {
+                                            <span class="badge bg-warning text-dark">Destaque</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Normal</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Descricao))
+                        {
+                            <div class="mb-3">
+                                <h6>Descrição:</h6>
+                                <p class="small text-muted">@Model.Descricao</p>
+                            </div>
+                        }
+
+                        <!-- Aviso adicional -->
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle"></i> Informação Importante
+                            </h6>
+                            <p class="mb-0 small">
+                                Ao excluir este produto, a foto associada também será removida do servidor.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" method="post" id="deleteForm">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="mt-4">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-danger me-md-2" id="btnDelete">
+                                <i class="fas fa-trash"></i> Confirmar Exclusão
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Confirmação adicional antes de excluir
+        document.getElementById('deleteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Você realmente deseja excluir o produto '@Model.Nome'? Esta ação não pode ser desfeita!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Desabilita o botão para evitar múltiplos cliques
+                    const btn = document.getElementById('btnDelete');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+                    
+                    // Submete o formulário
+                    e.target.submit();
+                }
+            });
+        });
+    </script>
+}

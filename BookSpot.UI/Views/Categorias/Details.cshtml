@@ -1,0 +1,61 @@
+@model CategoriaVM
+@{
+    ViewData["Title"] = "Categorias";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Menu"] = "Categorias";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>@Model.Nome</h1>
+    <div>
+        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        @if (User.IsInRole("Administrador"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Excluir</a>
+        }
+    </div>
+</div>
+
+@if (TempData["Erro"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Erro"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(Model.FotoUrl))
+        {
+            <img src="@Model.FotoUrl" class="img-fluid rounded" alt="@Model.Nome">
+        }
+        else
+        {
+            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 300px;">
+                <i class="fas fa-image fa-5x text-muted"></i>
+            </div>
+        }
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">@Model.Nome</h3>
+                <hr>
+                <div class="mb-3">
+                    <h5>Cor:</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="color-preview me-2" style="width: 30px; height: 30px; background-color: @Model.Cor; border: 1px solid #ccc; border-radius: 4px;"></div>
+                        <span>@Model.Cor</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <small class="text-muted">ID: @Model.Id</small>
+                </div>
+            </div>
+        </div>
+    </div>s
+</div>
+    
