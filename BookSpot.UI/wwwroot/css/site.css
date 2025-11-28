@@ -116,3 +116,27 @@ main {
 .badge {
   font-weight: 500;
 }
+
+.hero-section {
+    background-image: url('https://t3.ftcdn.net/jpg/03/52/36/40/360_F_352364010_AbEmy0ze2w2oQWyuI1usP0g8P2wRXOlX.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    /* Garante altura mínima para a imagem aparecer */
+    min-height: 350px;
+
+    /* Mantém borda arredondada como antes */
+    border-radius: 0 0 40px 40px;
+}
+.hero-section h1 {
+    font-size: 3.5rem;       /* Aumenta o tamanho */
+    font-weight: 800;        /* Deixa mais forte */
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section p {
+    font-size: 1.3rem;       /* Tamanho maior */
+    font-weight: 500;        /* Levemente mais forte */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
